@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookingService.Persistance.Migrations
 {
     [DbContext(typeof(BookingServiceDbContext))]
-    [Migration("20230704144256_InitDb")]
+    [Migration("20230710094805_InitDb")]
     partial class InitDb
     {
         /// <inheritdoc />
@@ -101,11 +101,17 @@ namespace BookingService.Persistance.Migrations
                     b.Property<DateTime?>("LastModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<byte>("Organiser")
-                        .HasColumnType("tinyint");
+                    b.Property<long>("Organiser")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StatusComment")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
