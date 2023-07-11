@@ -1,7 +1,9 @@
-﻿using BookingService.Application.Persistance;
+﻿using BookingService.Application.Enums;
+using BookingService.Application.Persistance;
 using BookingService.Application.Users.Queries.GetUsers;
 using BookingService.Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookingService.Application.Booking.Command.CreateBooking
 {
@@ -9,26 +11,45 @@ namespace BookingService.Application.Booking.Command.CreateBooking
     {
         private readonly IBookingServiceDbContext db;
         public CreateBookingCommandHandler(IBookingServiceDbContext db) => this.db = db;
-        public Task<ConsultationModel> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
+        public async Task<ConsultationModel> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
         {
-            //request ?? throw new Exception();
-            //if (request == null) throw new Exception();
+            if (request == null) throw new Exception();
 
-            //foreach (var user in request.Users)
-            //{
-            //    var patient = new UserModel
-            //    {
-            //        FirstName = user.FirstName,
-            //        LastName = user.LastName,
-            //    }
-            //}
+            var patient = await db.Users.FirstOrDefaultAsync(x => x.Email == request.PatientEmail && x.DeleteDate == null);
+            var doctor = await db.Users.FirstOrDefaultAsync(x => x.Email == request.DoctorEmail && x.DeleteDate == null);
 
+            var consultationDetails = new ConsultationDetails
+            {
+                UserId = request.Organiser == (long)UserTypeEnum.Patient ? patient!.Id : doctor!.Id,
+                Organiser = request.Organiser,
+                Title = request.Title,
+                Description = request.Description,
+                StartDate = request.StartDate,
+                EndDate = request.EndDate,
+                Status = "TENTATIVE"
+            };
+            db.ConsultationDetails.Add(consultationDetails);
+            await db.SaveChangesAsync(cancellationToken);
 
-            //var consultation = new ConsultationDetails
-            //{
+            var consultation = new Consultation
+            {
+                UserId = request.Organiser == (long)UserTypeEnum.Patient ? doctor!.Id : patient!.Id,
+                ConsultationDetailId = consultationDetails.Id,
+            };
+            db.Consultations.Add(consultation);
+            await db.SaveChangesAsync(cancellationToken);
 
-            //}
-            throw new NotImplementedException();
+            return new ConsultationModel
+            {
+                Id = consultationDetails.Id,
+                Patient = patient.Email,
+                Doctor = doctor.Email,
+                Title = consultationDetails.Title,
+                Description = consultationDetails.Description,
+                StartDate = consultationDetails.StartDate,
+                EndDate = consultationDetails.EndDate,
+                Status = "TENTATIVE",
+            };
         }
     }
 }

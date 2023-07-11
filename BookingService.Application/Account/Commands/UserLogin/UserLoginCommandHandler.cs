@@ -22,15 +22,6 @@ namespace BookingService.Application.Account.Commands.UserLogin
             }
 
             var token = await firebaseService.SignInWithEmailAndPasswordAsync(request.Email, request.Password);
-
-            //await helper.SaveRefreshToken(refresherToken, user, cancellationToken);
-
-            //return new TokenApiResponseModel
-            //{
-            //    AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
-            //    RefreshToken = refresherToken,
-            //};
-
         }
     }
 }
