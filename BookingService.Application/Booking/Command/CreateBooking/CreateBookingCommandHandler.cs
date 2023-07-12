@@ -1,9 +1,7 @@
 ﻿using BookingService.Application.Enums;
 using BookingService.Application.Persistance;
-using BookingService.Application.Users.Queries.GetUsers;
 using BookingService.Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace BookingService.Application.Booking.Command.CreateBooking
 {
@@ -15,8 +13,8 @@ namespace BookingService.Application.Booking.Command.CreateBooking
         {
             if (request == null) throw new Exception();
 
-            var patient = await db.Users.FirstOrDefaultAsync(x => x.Email == request.PatientEmail && x.DeleteDate == null);
-            var doctor = await db.Users.FirstOrDefaultAsync(x => x.Email == request.DoctorEmail && x.DeleteDate == null);
+            var patient = db.Users.FirstOrDefault(x => x.Email == request.PatientEmail && x.DeleteDate == null);
+            var doctor = db.Users.FirstOrDefault(x => x.Email == request.DoctorEmail && x.DeleteDate == null);
 
             var consultationDetails = new ConsultationDetails
             {

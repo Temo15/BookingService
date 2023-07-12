@@ -10,8 +10,8 @@ namespace BookingService.Domain.Entities
         public string? Description { get; set; }
         public string? Status { get; set; }
         public string? StatusComment { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public string? StartDate { get; set; }
+        public string? EndDate { get; set; }
 
         public virtual User User { get; set; }
         public virtual ICollection<Consultation> Consultations { get; set; }
